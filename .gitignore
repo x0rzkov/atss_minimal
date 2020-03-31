@@ -1,0 +1,7 @@
+*.pth
+coco2017
+build
+atss.egg-info
+*.so
+__pycache__
+.idea
