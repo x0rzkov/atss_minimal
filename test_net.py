@@ -42,8 +42,8 @@ for _, (images, targets, image_ids) in enumerate(tqdm(val_loader)):
 
         torch.cuda.synchronize()
         inference_timer.toc()
-        output = output.to(torch.device('cpu'))
-    pdb.set_trace()
+        output = output[0].to(torch.device('cpu'))
+
     predictions.update({img_id: result for img_id, result in zip(image_ids, output)})
 
 total_time = total_timer.toc()
