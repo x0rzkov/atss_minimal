@@ -1,9 +1,8 @@
 from collections import namedtuple
 import torch.nn.functional as F
 from torch import nn
-from atss_core.layers import FrozenBatchNorm2d
-from atss_core.layers import Conv2d
-from atss_core.layers import DFConv2d
+from atss_core.layers.batch_norm import FrozenBatchNorm2d
+from atss_core.layers.misc import Conv2d, DFConv2d
 from atss_core.utils.registry import Registry
 
 # ResNet stage specification

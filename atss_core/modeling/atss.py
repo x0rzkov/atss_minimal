@@ -5,9 +5,9 @@ from torch import nn
 from .inference import ATSSPostProcessor
 from .loss import ATSSLossComputation
 
-from atss_core.layers import Scale
-from atss_core.layers import DFConv2d
-from ..anchor_generator import make_anchor_generator_atss
+from atss_core.layers.scale import Scale
+from atss_core.layers.misc import DFConv2d
+from atss_core.modeling.anchor_generator import make_anchor_generator_atss
 
 
 class BoxCoder(object):

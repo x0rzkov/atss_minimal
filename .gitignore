@@ -1,7 +1,7 @@
 *.pth
 coco2017
 build
-atss.egg-info
+*-info
 *.so
 __pycache__
 .idea

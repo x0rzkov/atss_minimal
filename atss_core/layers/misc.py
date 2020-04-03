@@ -1,18 +1,6 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
-"""
-helper class that supports empty tensors on some nn functions.
-
-Ideally, add support directly in PyTorch to empty tensors in
-those functions.
-
-This can be removed once https://github.com/pytorch/pytorch/issues/12013
-is implemented
-"""
-
 import math
 import torch
 from torch.nn.modules.utils import _ntuple
-
 
 class _NewEmptyTensorOp(torch.autograd.Function):
     @staticmethod
@@ -132,11 +120,11 @@ class DFConv2d(torch.nn.Module):
         else:
             offset_base_channels = kernel_size * kernel_size
         if with_modulated_dcn:
-            from atss_core.layers import ModulatedDeformConv
+            from atss_core.layers.dcn.deform_conv_module import ModulatedDeformConv
             offset_channels = offset_base_channels * 3  # default: 27
             conv_block = ModulatedDeformConv
         else:
-            from atss_core.layers import DeformConv
+            from atss_core.layers.dcn.deform_conv_module import DeformConv
             offset_channels = offset_base_channels * 2  # default: 18
             conv_block = DeformConv
         self.offset = Conv2d(

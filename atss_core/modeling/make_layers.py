@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 # from atss_core.config import cfg
-from atss_core.layers import Conv2d
+from atss_core.layers.misc import Conv2d
 
 
 def get_group_gn(dim, dim_per_gp, num_groups):

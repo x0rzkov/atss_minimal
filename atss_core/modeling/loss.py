@@ -1,7 +1,7 @@
 import torch
 from torch import nn
-from ..utils import concat_box_prediction_layers
-from atss_core.layers import SigmoidFocalLoss
+from atss_core.modeling.utils import concat_box_prediction_layers
+from atss_core.layers.sigmoid_focal_loss import SigmoidFocalLoss
 from atss_core.modeling.matcher import Matcher
 from atss_core.structures.boxlist_ops import boxlist_iou
 from atss_core.structures.boxlist_ops import cat_boxlist

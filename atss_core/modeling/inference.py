@@ -1,5 +1,5 @@
 import torch
-from ..utils import permute_and_flatten
+from atss_core.modeling.utils import permute_and_flatten
 from atss_core.structures.bounding_box import BoxList
 from atss_core.structures.boxlist_ops import cat_boxlist
 from atss_core.structures.boxlist_ops import boxlist_ml_nms

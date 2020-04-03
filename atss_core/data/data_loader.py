@@ -68,7 +68,8 @@ def make_data_loader(cfg, is_train=True, start_iter=0):
     aspect_grouping = [1]
 
     transforms = build_transforms(cfg, is_train)
-    dataset = COCODataset('coco2017/annotations/instances_val2017.json', 'coco2017/val2017',
+    dataset = COCODataset('/home/feiyu/Data/coco2017/annotations/instances_val2017.json',
+                          '/home/feiyu/Data/coco2017/val2017',
                           remove_images_without_annotations=is_train, transforms=transforms)
 
     if shuffle:

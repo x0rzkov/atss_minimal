@@ -1,8 +1,7 @@
 from torch import nn
 from atss_core.structures.image_list import to_image_list
 from atss_core.modeling.backbone import build_resnet_fpn_p3p7_backbone
-from atss_core.modeling.rpn.atss.atss import ATSSModule
-import pdb
+from atss_core.modeling.atss import ATSSModule
 
 
 class GeneralizedRCNN(nn.Module):
