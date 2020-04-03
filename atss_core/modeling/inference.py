@@ -53,10 +53,8 @@ class ATSSPostProcessor(torch.nn.Module):
             per_box_loc = per_candidate_nonzeros[:, 0]
             per_class = per_candidate_nonzeros[:, 1] + 1
 
-            detections = self.box_coder.decode(
-                per_box_regression[per_box_loc, :].view(-1, 4),
-                per_anchors.bbox[per_box_loc, :].view(-1, 4)
-            )
+            detections = self.box_coder.decode(per_box_regression[per_box_loc, :].view(-1, 4),
+                                               per_anchors.bbox[per_box_loc, :].view(-1, 4))
 
             boxlist = BoxList(detections, per_anchors.size, mode="xyxy")
             boxlist.add_field("labels", per_class)

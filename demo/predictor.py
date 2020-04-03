@@ -2,7 +2,6 @@ import cv2
 import torch
 from torchvision import transforms as T
 from generalized_rcnn import GeneralizedRCNN
-from atss_core.utils.checkpoint import Checkpointer
 from atss_core.structures.image_list import to_image_list
 import pdb
 
@@ -15,8 +14,8 @@ class COCODemo:
         self.model.eval()
         self.min_image_size = min_img_size
 
-        checkpointer = Checkpointer(self.model, save_dir='.')
-        _ = checkpointer.load(cfg.weights)
+        checkpoint = torch.load(cfg.weights, map_location=torch.device("cpu"))
+        self.model.load_state_dict(checkpoint)
 
         self.transforms = self.build_transform()
 
@@ -78,18 +77,13 @@ class COCODemo:
         image_list = image_list.to(torch.device('cuda'))
 
         with torch.no_grad():
-            predictions = self.model(image_list)
-
-        predictions = [aa.to(torch.device('cpu')) for aa in predictions]
-
-        # always single image is passed at a time
-        prediction = predictions[0]
+            predictions = self.model(image_list)[0].to(torch.device('cpu'))
 
         # reshape prediction (a BoxList) into the original image size
         height, width = original_img.shape[:-1]
-        prediction = prediction.resize((width, height))
+        predictions = predictions.resize((width, height))
 
-        return prediction
+        return predictions
 
     def select_top_predictions(self, predictions):
         """

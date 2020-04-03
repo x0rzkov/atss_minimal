@@ -35,12 +35,8 @@ class COCODataset(torchvision.datasets.coco.CocoDetection):
                     ids.append(img_id)
             self.ids = ids
 
-        self.json_category_id_to_contiguous_id = {
-            v: i + 1 for i, v in enumerate(self.coco.getCatIds())
-        }
-        self.contiguous_category_id_to_json_id = {
-            v: k for k, v in self.json_category_id_to_contiguous_id.items()
-        }
+        self.json_category_id_to_contiguous_id = {v: i + 1 for i, v in enumerate(self.coco.getCatIds())}
+        self.contiguous_category_id_to_json_id = {v: k for k, v in self.json_category_id_to_contiguous_id.items()}
         self.id_to_img_map = {k: v for k, v in enumerate(self.ids)}
         self._transforms = transforms
 

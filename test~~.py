@@ -1,7 +1,22 @@
 #!/usr/bin/env python 
 # -*- coding:utf-8 -*-
+import torch
+aa = torch.load('ATSS_R_50_FPN_1x.pth')
+
+# for kkk in kk:
+#     if 'rpn' in kkk:
+#         print(kkk)
+
 from collections import OrderedDict
-metrics = {"bbox": ["AP", "AP50", "AP75", "APs", "APm", "APl"]}
-results = OrderedDict()
-results['bbox'] = OrderedDict([(metric, -1) for metric in metrics['bbox']])
-print(results)
+bb = OrderedDict()
+
+for one_key, v in aa['model'].items():
+    if 'rpn' in one_key:
+        new_key = one_key.replace('rpn.', '')
+        bb[new_key] = v
+    else:
+        bb[one_key] = v
+
+torch.save(bb, 'res50_1x.pth')
+
+

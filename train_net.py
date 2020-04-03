@@ -12,32 +12,6 @@ from generalized_rcnn import GeneralizedRCNN
 from atss_core.utils.checkpoint import Checkpointer
 
 
-def run_test(cfg, model):
-    torch.cuda.empty_cache()  # TODO check if it helps
-    iou_types = ("bbox",)
-
-    output_folders = [None] * len(cfg.DATASETS.TEST)
-    dataset_names = cfg.DATASETS.TEST
-    if cfg.OUTPUT_DIR:
-        for idx, dataset_name in enumerate(dataset_names):
-            output_folder = os.path.join(cfg.OUTPUT_DIR, "inference", dataset_name)
-            mkdir(output_folder)
-            output_folders[idx] = output_folder
-    data_loaders_val = make_data_loader(cfg, is_train=False)
-    for output_folder, dataset_name, data_loader_val in zip(output_folders, dataset_names, data_loaders_val):
-        inference(
-            model,
-            data_loader_val,
-            dataset_name=dataset_name,
-            iou_types=iou_types,
-            box_only=False if cfg.MODEL.ATSS_ON or cfg.MODEL.FCOS_ON or cfg.MODEL.RETINANET_ON else cfg.MODEL.RPN_ONLY,
-            device=cfg.MODEL.DEVICE,
-            expected_results=cfg.TEST.EXPECTED_RESULTS,
-            expected_results_sigma_tol=cfg.TEST.EXPECTED_RESULTS_SIGMA_TOL,
-            output_folder=output_folder,
-        )
-
-
 parser = argparse.ArgumentParser(description="PyTorch Object Detection Training")
 parser.add_argument("--bs", type=int, default=4, help='test batch size.')
 parser.add_argument("--show_env", action='store_true', default=False, help="Whether to show the env information.")
@@ -70,17 +44,6 @@ arguments.update(extra_checkpoint_data)
 data_loader = make_data_loader(cfg, is_train=True, start_iter=arguments["iteration"])
 
 checkpoint_period = 2500
-
-# do_train(
-#     model,
-#     data_loader,
-#     optimizer,
-#     scheduler,
-#     checkpointer,
-#     device,
-#     checkpoint_period,
-#     arguments,
-# )
 
 meters = MetricLogger(delimiter="  ")
 max_iter = len(data_loader)
@@ -145,6 +108,3 @@ for iteration, (images, targets, _) in enumerate(data_loader, start_iter):
 
 total_training_time = time.time() - start_training_time
 total_time_str = str(datetime.timedelta(seconds=total_training_time))
-
-
-run_test(cfg, model, args.distributed)

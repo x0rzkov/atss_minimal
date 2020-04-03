@@ -1,4 +1,4 @@
-from . import transforms as T
+from atss_core.data import transforms as T
 
 
 def build_transforms(cfg, is_train=True):

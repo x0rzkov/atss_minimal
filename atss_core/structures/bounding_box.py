@@ -1,12 +1,10 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 import torch
 
-# transpose
 FLIP_LEFT_RIGHT = 0
 FLIP_TOP_BOTTOM = 1
 
 
-class BoxList(object):
+class BoxList:
     """
     This class represents a set of bounding boxes.
     The bounding boxes are represented as a Nx4 Tensor.
@@ -20,9 +18,7 @@ class BoxList(object):
         device = bbox.device if isinstance(bbox, torch.Tensor) else torch.device("cpu")
         bbox = torch.as_tensor(bbox, dtype=torch.float32, device=device)
         if bbox.ndimension() != 2:
-            raise ValueError(
-                "bbox should have 2 dimensions, got {}".format(bbox.ndimension())
-            )
+            raise ValueError("bbox should have 2 dimensions, got {}".format(bbox.ndimension()))
         if bbox.size(-1) != 4:
             raise ValueError(
                 "last dimension of bbox should have a "
@@ -65,9 +61,7 @@ class BoxList(object):
             bbox = BoxList(bbox, self.size, mode=mode)
         else:
             TO_REMOVE = 1
-            bbox = torch.cat(
-                (xmin, ymin, xmax - xmin + TO_REMOVE, ymax - ymin + TO_REMOVE), dim=-1
-            )
+            bbox = torch.cat((xmin, ymin, xmax - xmin + TO_REMOVE, ymax - ymin + TO_REMOVE), dim=-1)
             bbox = BoxList(bbox, self.size, mode=mode)
         bbox._copy_extra_fields(self)
         return bbox
@@ -79,12 +73,10 @@ class BoxList(object):
         elif self.mode == "xywh":
             TO_REMOVE = 1
             xmin, ymin, w, h = self.bbox.split(1, dim=-1)
-            return (
-                xmin,
-                ymin,
-                xmin + (w - TO_REMOVE).clamp(min=0),
-                ymin + (h - TO_REMOVE).clamp(min=0),
-            )
+            return (xmin,
+                    ymin,
+                    xmin + (w - TO_REMOVE).clamp(min=0),
+                    ymin + (h - TO_REMOVE).clamp(min=0))
         else:
             raise RuntimeError("Should not be here")
 

@@ -37,14 +37,13 @@ def do_coco_evaluation(dataset, predictions, output_folder, iou_type, expected_r
 
 
 def prepare_for_coco_detection(predictions, dataset):
-    # assert isinstance(dataset, COCODataset)
     coco_results = []
-    for image_id, prediction in enumerate(predictions):
-        original_id = dataset.id_to_img_map[image_id]
+    for img_id, prediction in predictions.items():
+        original_id = dataset.id_to_img_map[img_id]
         if len(prediction) == 0:
             continue
 
-        img_info = dataset.get_img_info(image_id)
+        img_info = dataset.get_img_info(img_id)
         image_width = img_info["width"]
         image_height = img_info["height"]
         prediction = prediction.resize((image_width, image_height))

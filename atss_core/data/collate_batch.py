@@ -1,4 +1,3 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 from atss_core.structures.image_list import to_image_list
 
 

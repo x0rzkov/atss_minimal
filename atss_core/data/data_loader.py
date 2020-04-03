@@ -3,20 +3,11 @@ import copy
 
 import torch.utils.data as data
 
-from . import samplers
+from atss_core.data.grouped_batch_sampler import GroupedBatchSampler
+from atss_core.data.iteration_based_batch_sampler import IterationBasedBatchSampler
 from atss_core.data.coco import COCODataset
 from .collate_batch import BatchCollator
-from .transforms import build_transforms
-
-
-def make_data_sampler(dataset, shuffle, distributed):
-    if distributed:
-        return samplers.DistributedSampler(dataset, shuffle=shuffle)
-    if shuffle:
-        sampler = data.sampler.RandomSampler(dataset)
-    else:
-        sampler = data.sampler.SequentialSampler(dataset)
-    return sampler
+from atss_core.data.build import build_transforms
 
 
 def _quantize(x, bins):
@@ -42,12 +33,12 @@ def make_batch_data_sampler(dataset, sampler, aspect_grouping, images_per_batch,
 
         aspect_ratios = _compute_aspect_ratios(dataset)
         group_ids = _quantize(aspect_ratios, aspect_grouping)
-        batch_sampler = samplers.GroupedBatchSampler(sampler, group_ids, images_per_batch, drop_uneven=False)
+        batch_sampler = GroupedBatchSampler(sampler, group_ids, images_per_batch, drop_uneven=False)
     else:
         batch_sampler = data.sampler.BatchSampler(sampler, images_per_batch, drop_last=False)
 
     if num_iters is not None:
-        batch_sampler = samplers.IterationBasedBatchSampler(batch_sampler, num_iters, start_iter)
+        batch_sampler = IterationBasedBatchSampler(batch_sampler, num_iters, start_iter)
 
     return batch_sampler
 

@@ -8,7 +8,7 @@ import pdb
 import time
 
 parser = argparse.ArgumentParser(description="PyTorch Object Detection Webcam Demo")
-parser.add_argument("--weights", default="ATSS_R_50_FPN_1x.pth", help="path to the trained model")
+parser.add_argument("--weights", default="res50_1x.pth", help="path to the trained model")
 parser.add_argument("--images", default="images", help="path to demo images directory")
 
 args = parser.parse_args()

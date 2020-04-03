@@ -1,43 +1,36 @@
 from torch import nn
-from atss_core.structures.image_list import to_image_list
 from atss_core.modeling.backbone import build_resnet_fpn_p3p7_backbone
-from atss_core.modeling.atss import ATSSModule
-
+from atss_core.modeling.inference import ATSSPostProcessor
+from atss_core.modeling.loss import ATSSLossComputation
+from atss_core.modeling.atss import ATSSHead, BoxCoder
+from atss_core.modeling.anchor_generator import make_anchor_generator_atss
+import pdb
 
 class GeneralizedRCNN(nn.Module):
     def __init__(self, cfg):
         super().__init__()
 
         self.backbone = build_resnet_fpn_p3p7_backbone()
-        self.rpn = ATSSModule(cfg, self.backbone.out_channels)
+
+        self.head = ATSSHead(cfg, self.backbone.out_channels)
+        self.loss_evaluator = ATSSLossComputation(cfg, BoxCoder(cfg))
+        self.box_selector_test = ATSSPostProcessor(cfg, BoxCoder(cfg))
+        self.anchor_generator = make_anchor_generator_atss(cfg)
 
     def forward(self, images, targets=None):
-        """
-        Arguments:
-            images (list[Tensor] or ImageList): images to be processed
-            targets (list[BoxList]): ground-truth boxes present in the image (optional)
-
-        Returns:
-            result (list[BoxList] or dict[Tensor]): the output from the model.
-                During training, it returns a dict[Tensor] which contains the losses.
-                During testing, it returns list[BoxList] contains additional fields
-                like `scores`, `labels` and `mask` (for Mask R-CNN models).
-
-        """
         if self.training and targets is None:
             raise ValueError("In training mode, targets should be passed")
 
-        images = to_image_list(images)
         features = self.backbone(images.tensors)
-        proposals, proposal_losses = self.rpn(images, features, targets)
 
-        result = proposals
-        detector_losses = {}
+        box_cls, box_reg, centerness = self.head(features)
+        anchors = self.anchor_generator(images, features)
 
         if self.training:
-            losses = {}
-            losses.update(detector_losses)
-            losses.update(proposal_losses)
-            return losses
-
-        return result
+            loss_cls, loss_box, loss_centerness = self.loss_evaluator(box_cls, box_reg, centerness, targets, anchors)
+            losses = {"loss_cls": loss_cls,
+                      "loss_reg": loss_box,
+                      "loss_centerness": loss_centerness}
+            return None, losses
+        else:
+            return self.box_selector_test(box_cls, box_reg, centerness, anchors)

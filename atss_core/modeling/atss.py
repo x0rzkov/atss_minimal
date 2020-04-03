@@ -151,6 +151,6 @@ class ATSSModule(torch.nn.Module):
             losses = {"loss_cls": loss_cls,
                       "loss_reg": loss_box,
                       "loss_centerness": loss_centerness}
-            return None, losses
+            return losses
         else:
             return self.box_selector_test(box_cls, box_reg, centerness, anchors), {}
