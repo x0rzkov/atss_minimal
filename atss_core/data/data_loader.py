@@ -45,11 +45,9 @@ def make_batch_data_sampler(dataset, sampler, aspect_grouping, images_per_batch,
 
 def make_data_loader(cfg, is_train=True, start_iter=0):
     if is_train:
-        bs = cfg.bs
         shuffle = True
         num_iters = cfg.max_iter
     else:
-        bs = cfg.bs
         shuffle = False
         num_iters = None
 
@@ -59,16 +57,16 @@ def make_data_loader(cfg, is_train=True, start_iter=0):
     aspect_grouping = [1]
 
     transforms = build_transforms(cfg, is_train)
-    dataset = COCODataset('/home/feiyu/Data/coco2017/annotations/instances_val2017.json',
-                          '/home/feiyu/Data/coco2017/val2017',
-                          remove_images_without_annotations=is_train, transforms=transforms)
-
+    dataset = COCODataset('/home/feiyuhuahuo/Data/coco2017/val2017',
+                          '/home/feiyuhuahuo/Data/coco2017/annotations/instances_val2017.json',
+                          remove_images_without_annotations=True, transforms=transforms)
+    exit()
     if shuffle:
         sampler = data.sampler.RandomSampler(dataset)
     else:
         sampler = data.sampler.SequentialSampler(dataset)
 
-    batch_sampler = make_batch_data_sampler(dataset, sampler, aspect_grouping, bs, num_iters, start_iter)
+    batch_sampler = make_batch_data_sampler(dataset, sampler, aspect_grouping, cfg.bs, num_iters, start_iter)
     collator = BatchCollator(cfg.size_divisibility)
 
     data_loader = data.DataLoader(dataset, num_workers=8, batch_sampler=batch_sampler, collate_fn=collator)

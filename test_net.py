@@ -5,7 +5,6 @@ from tqdm import tqdm
 import torch
 import os
 from atss_core.data.coco_eval import do_coco_evaluation
-from atss_core.utils.timer import Timer, get_time_str
 from generalized_rcnn import GeneralizedRCNN
 import pdb
 
@@ -30,26 +29,15 @@ model.eval()
 checkpoint = torch.load(cfg.weights, map_location=torch.device("cpu"))
 model.load_state_dict(checkpoint)
 
-total_timer = Timer()
-inference_timer = Timer()
-total_timer.tic()
-
 predictions = {}
-for _, (images, targets, image_ids) in enumerate(tqdm(val_loader)):
-    with torch.no_grad():
-        inference_timer.tic()
+
+with torch.no_grad():
+    for _, (images, targets, image_ids) in enumerate(tqdm(val_loader)):
         output = model(images.to(torch.device('cuda')))
-
-        torch.cuda.synchronize()
-        inference_timer.toc()
         output = output[0].to(torch.device('cpu'))
+        pdb.set_trace()
+        predictions.update({img_id: result for img_id, result in zip(image_ids, output)})
 
-    predictions.update({img_id: result for img_id, result in zip(image_ids, output)})
-
-total_time = total_timer.toc()
-total_time_str = get_time_str(total_time)
-
-total_infer_time = get_time_str(inference_timer.total_time)
 
 output_folder = 'results/coco_2017_val'
 os.makedirs(output_folder, exist_ok=True)

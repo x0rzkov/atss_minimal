@@ -22,12 +22,9 @@ class Compose(object):
 
 class Resize(object):
     def __init__(self, min_size, max_size):
-        if not isinstance(min_size, (list, tuple)):
-            min_size = (min_size,)
-        self.min_size = min_size
+        self.min_size = (min_size, )
         self.max_size = max_size
 
-    # modified from torchvision to add support for max size
     def get_size(self, image_size):
         w, h = image_size
         size = random.choice(self.min_size)
